@@ -11,8 +11,8 @@
 namespace caffe {
 
 /**
- * @brief Takes a Blob and crop it, to the shape specified by the second input
- *  Blob, across all dimensions after the specified axis.
+ * @brief Takes a Blob and crop it along either the width or height dimension,
+ *        outputting a cropped Blob.
  *
  * TODO(dox): thorough documentation for Forward, Backward, and proto params.
  */
@@ -41,27 +41,9 @@ class CropLayer : public Layer<Dtype> {
   virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
 
-  vector<int> offsets;
-
- private:
-  void crop_copy(const vector<Blob<Dtype>*>& bottom,
-               const vector<Blob<Dtype>*>& top,
-               const vector<int>& offsets,
-               vector<int> indices,
-               int cur_dim,
-               const Dtype* src_data,
-               Dtype* dest_data,
-               bool is_forward);
-
-  void crop_copy_gpu(const vector<Blob<Dtype>*>& bottom,
-                const vector<Blob<Dtype>*>& top,
-                const vector<int>& offsets,
-                vector<int> indices,
-                int cur_dim,
-                const Dtype* src_data,
-                Dtype* dest_data,
-                bool is_forward);
+  int crop_h_, crop_w_;
 };
+
 }  // namespace caffe
 
 #endif  // CAFFE_CROP_LAYER_HPP_
