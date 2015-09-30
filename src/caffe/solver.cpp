@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "caffe/solver.hpp"
-#include "caffe/util/format.hpp"
 #include "caffe/util/hdf5.hpp"
 #include "caffe/util/io.hpp"
 #include "caffe/util/upgrade_proto.hpp"
@@ -192,6 +191,7 @@ void Solver<Dtype>::InitTestNets() {
 
 template <typename Dtype>
 void Solver<Dtype>::Step(int iters) {
+  vector<Blob<Dtype>*> bottom_vec;
   const int start_iter = iter_;
   const int stop_iter = iter_ + iters;
   int average_loss = this->param_.average_loss();
@@ -219,7 +219,7 @@ void Solver<Dtype>::Step(int iters) {
     // accumulate the loss and gradient
     Dtype loss = 0;
     for (int i = 0; i < param_.iter_size(); ++i) {
-      loss += net_->ForwardBackward();
+      loss += net_->ForwardBackward(bottom_vec);
     }
     loss /= param_.iter_size();
     // average the loss across iterations for smoothed reporting
@@ -310,7 +310,7 @@ void Solver<Dtype>::Solve(const char* resume_file) {
   if (param_.display() && iter_ % param_.display() == 0) {
     int average_loss = this->param_.average_loss();
     Dtype loss;
-    net_->Forward(&loss);
+    net_->ForwardPrefilled(&loss);
 
     UpdateSmoothedLoss(loss, start_iter, average_loss);
 
@@ -340,6 +340,7 @@ void Solver<Dtype>::Test(const int test_net_id) {
       ShareTrainedLayersWith(net_.get());
   vector<Dtype> test_score;
   vector<int> test_score_output_id;
+  vector<Blob<Dtype>*> bottom_vec;
   const shared_ptr<Net<Dtype> >& test_net = test_nets_[test_net_id];
   Dtype loss = 0;
   for (int i = 0; i < param_.test_iter(test_net_id); ++i) {
@@ -360,7 +361,7 @@ void Solver<Dtype>::Test(const int test_net_id) {
 
     Dtype iter_loss;
     const vector<Blob<Dtype>*>& result =
-        test_net->Forward(&iter_loss);
+        test_net->Forward(bottom_vec, &iter_loss);
     if (param_.test_compute_loss()) {
       loss += iter_loss;
     }
@@ -444,8 +445,11 @@ void Solver<Dtype>::CheckSnapshotWritePermissions() {
 
 template <typename Dtype>
 string Solver<Dtype>::SnapshotFilename(const string extension) {
-  return param_.snapshot_prefix() + "_iter_" + caffe::format_int(iter_)
-    + extension;
+  string filename(param_.snapshot_prefix());
+  const int kBufferSize = 20;
+  char iter_str_buffer[kBufferSize];
+  snprintf(iter_str_buffer, kBufferSize, "_iter_%d", iter_);
+  return filename + iter_str_buffer + extension;
 }
 
 template <typename Dtype>
