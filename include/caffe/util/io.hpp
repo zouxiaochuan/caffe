@@ -16,6 +16,10 @@
 #define CAFFE_TMP_DIR_RETRIES 100
 #endif
 
+#ifndef CAFFE_TMP_DIR_RETRIES
+#define CAFFE_TMP_DIR_RETRIES 100
+#endif
+
 namespace caffe {
 
 using ::google::protobuf::Message;
@@ -34,19 +38,6 @@ inline void MakeTempDir(string* temp_dirname) {
     }
   }
   LOG(FATAL) << "Failed to create a temporary directory.";
-}
-
-inline void MakeTempFilename(string* temp_filename) {
-  static path temp_files_subpath;
-  static uint64_t next_temp_file = 0;
-  temp_filename->clear();
-  if ( temp_files_subpath.empty() ) {
-    string path_string="";
-    MakeTempDir(&path_string);
-    temp_files_subpath = path_string;
-  }
-  *temp_filename =
-    (temp_files_subpath/caffe::format_int(next_temp_file++, 9)).string();
 }
 
 bool ReadProtoFromTextFile(const char* filename, Message* proto);
