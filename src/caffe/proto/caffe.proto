@@ -306,7 +306,7 @@ message ParamSpec {
 // NOTE
 // Update the next available ID when you add a new LayerParameter field.
 //
-// LayerParameter next available layer-specific ID: 145 (last added: crop_param)
+// LayerParameter next available layer-specific ID: 141 (last added: elu_param)
 // Extra next available ID: 1984003
 message LayerParameter {
   optional string name = 1; // the layer name
@@ -696,7 +696,7 @@ message EltwiseParameter {
 // Message that stores parameters used by ELULayer
 message ELUParameter {
   // Described in:
-  // Clevert, D.-A., Unterthiner, T., & Hochreiter, S. (2015). Fast and Accurate
+  // Clevert, D.-A., Unterthiner, T., & Hochreiter, S. (2015). Fast and Accurate 
   // Deep Network Learning by Exponential Linear Units (ELUs). arXiv
   optional float alpha = 1 [default = 1];
 }
