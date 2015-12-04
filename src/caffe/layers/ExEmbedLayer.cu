@@ -6,7 +6,6 @@
 #include "caffe/util/math_functions.hpp"
 
 namespace caffe {
-
 template <typename Dtype>
 __global__ void ExEmbedForward(const int nthreads, const Dtype* bottom_data,
                                const Dtype* weight, const int M, const int N,
@@ -15,8 +14,8 @@ __global__ void ExEmbedForward(const int nthreads, const Dtype* bottom_data,
 {
     CUDA_KERNEL_LOOP(cidx, nthreads)
     {
-        const int n = cidx / (M * bottomLen);
-        const int r = cidx % (M * bottomLen);
+        const int n = cidx % N;
+        const int r = cidx / N;
         const int m = r / bottomLen;
         //const int k = r % bottomLen;
 
@@ -31,6 +30,7 @@ __global__ void ExEmbedForward(const int nthreads, const Dtype* bottom_data,
     }
 }
 
+
 template <typename Dtype>
 __global__ void ExEmbedBackward(const int nthreads, const Dtype* bottom_data,
                                const Dtype* top_diff, const int M, const int N,
@@ -39,8 +39,8 @@ __global__ void ExEmbedBackward(const int nthreads, const Dtype* bottom_data,
 {
     CUDA_KERNEL_LOOP(cidx, nthreads)
     {
-        const int n = cidx / (M * bottomLen);
-        const int r = cidx % (M * bottomLen);
+        const int n = cidx % N;
+        const int r = cidx / N;
         const int m = r / bottomLen;
         //const int k = r % bottomLen;
 
@@ -55,6 +55,7 @@ __global__ void ExEmbedBackward(const int nthreads, const Dtype* bottom_data,
         }        
     }
 }
+
 
 template <typename Dtype>
 void ExEmbedLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
