@@ -39,14 +39,12 @@ shared_ptr<Layer<Dtype> > GetConvolutionLayer(
     const LayerParameter& param) {
   ConvolutionParameter conv_param = param.convolution_param();
   ConvolutionParameter_Engine engine = conv_param.engine();
-#ifdef USE_CUDNN
   bool use_dilation = false;
   for (int i = 0; i < conv_param.dilation_size(); ++i) {
     if (conv_param.dilation(i) > 1) {
       use_dilation = true;
     }
   }
-#endif
   if (engine == ConvolutionParameter_Engine_DEFAULT) {
     engine = ConvolutionParameter_Engine_CAFFE;
 #ifdef USE_CUDNN
@@ -91,16 +89,7 @@ shared_ptr<Layer<Dtype> > GetPoolingLayer(const LayerParameter& param) {
                 << "Using Caffe's own pooling layer.";
       return shared_ptr<Layer<Dtype> >(new PoolingLayer<Dtype>(param));
     }
-    // CuDNN assumes layers are not being modified in place, thus
-    // breaking our index tracking for updates in some cases in Caffe.
-    // Until there is a workaround in Caffe (index management) or
-    // cuDNN, use Caffe layer to max pooling, or don't use in place
-    // layers after max pooling layers
-    if (param.pooling_param().pool() == PoolingParameter_PoolMethod_MAX) {
-        return shared_ptr<Layer<Dtype> >(new PoolingLayer<Dtype>(param));
-    } else {
-        return shared_ptr<Layer<Dtype> >(new CuDNNPoolingLayer<Dtype>(param));
-    }
+    return shared_ptr<Layer<Dtype> >(new CuDNNPoolingLayer<Dtype>(param));
 #endif
   } else {
     LOG(FATAL) << "Layer " << param.name() << " has unknown engine.";
