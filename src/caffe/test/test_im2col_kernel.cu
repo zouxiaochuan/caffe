@@ -56,7 +56,7 @@ class Im2colKernelTest : public GPUDeviceTest<Dtype> {
     channels_ = blob_bottom_->channels();
     pad_ = 0;
     stride_ = 2;
-    dilation_ = 1;
+    dilation_ = 3;
     kernel_size_ = 3;
     height_col_ = (height_ + 2 * pad_ -
         (dilation_ * (kernel_size_ - 1) + 1)) / stride_ + 1;
