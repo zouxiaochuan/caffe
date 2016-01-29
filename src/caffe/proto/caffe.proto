@@ -818,14 +818,6 @@ message InnerProductParameter {
   optional bool transpose = 6 [default = false];
 }
 
-message InputParameter {
-  // This layer produces N >= 1 top blob(s) to be assigned manually.
-  // Define N shapes to set a shape for each top.
-  // Define 1 shape to set the same shape for every top.
-  // Define no shape to defer to reshaping manually.
-  repeated BlobShape shape = 1;
-}
-
 // Message that stores parameters used by LogLayer
 message LogParameter {
   // LogLayer computes outputs y = log_base(shift + scale * x), for base > 0.
