@@ -122,7 +122,9 @@ void ExTextMemoryDataLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& botto
     {
         Blob<Dtype>* pBlob = this->datas_[this->pos_][i];
         top[i]->ReshapeLike(*pBlob);
-        top[i]->ShareData(*pBlob);
+        memcpy(top[i]->mutable_cpu_data(),pBlob->cpu_data(),
+               pBlob->count()*sizeof(Dtype));
+        //top[i]->ShareData(*pBlob);
     }
     
     this->pos_++;
