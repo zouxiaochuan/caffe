@@ -1,7 +1,7 @@
 #ifndef CAFFE_EXTEXTMEMORYDATA_HPP_
 #define CAFFE_EXTEXTMEMORYDATA_HPP_
 
-#include "data_layers.hpp"
+#include "caffe/layers/base_data_layer.hpp"
 
 namespace caffe
 {

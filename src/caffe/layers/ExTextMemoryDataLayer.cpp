@@ -1,7 +1,7 @@
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 
-#include "caffe/ExTextMemoryDataLayer.hpp"
+#include "caffe/layers/ExTextMemoryDataLayer.hpp"
 
 using namespace std;
 using namespace boost;

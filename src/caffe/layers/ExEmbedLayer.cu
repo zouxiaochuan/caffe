@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "caffe/ExEmbedLayer.hpp"
+#include "caffe/layers/ExEmbedLayer.hpp"
 #include "caffe/filler.hpp"
 #include "caffe/util/gpu_util.cuh"
 #include "caffe/util/math_functions.hpp"

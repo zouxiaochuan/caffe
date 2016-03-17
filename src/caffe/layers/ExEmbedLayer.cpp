@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 
-#include "caffe/ExEmbedLayer.hpp"
+#include "caffe/layers/ExEmbedLayer.hpp"
 #include "caffe/filler.hpp"
 #include "caffe/util/math_functions.hpp"
 
