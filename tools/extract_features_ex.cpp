@@ -24,14 +24,14 @@ void extract(const string& outname, const string& paramname,
 
     net->CopyTrainedLayersFrom(paramname);
     
-    std::vector<Blob<float>*> input_vec;
+    //std::vector<Blob<float>*> input_vec;
 
     ofstream outfile(outname.c_str());
     CHECK(!outfile.fail()) << "Failed to open file: " << outname;
     
     for(int i=0;i<nBatch;i++)
     {
-        net->Forward(input_vec);
+        net->Forward();
         for(int j=0;j<blobnames.size();j++)
         {
             const boost::shared_ptr<Blob<Dtype> > feature_blob = net

@@ -12,7 +12,7 @@ template <typename Dtype>
 void ExTextMemoryDataLayer<Dtype>::addBuffer(const vector<vector<vector<Dtype> > >&
                                       buffer)
 {
-    vector<size_t> sizes(buffer[0].size());
+    vector<size_t> sizes(buffer[0].size(),1);
     for(int row=0;row<buffer.size();row++)
     {
         for (int col=0;col<buffer[row].size();col++)
