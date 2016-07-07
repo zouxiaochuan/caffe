@@ -46,6 +46,42 @@ void ExTextMemoryDataLayer<Dtype>::addBuffer(const vector<vector<vector<Dtype> >
 }
 
 template <typename Dtype>
+void ExTextMemoryDataLayer<Dtype>::processLines(const vector<string>& lines, vector<vector<vector<Dtype> > >& buffer)
+{
+    buffer.resize(lines.size());
+#pragma omp parallel for schedule(static)
+    for (int i=0;i<lines.size();i++)
+    {
+        vector<string> parts;
+        vector<vector<Dtype> > data;
+        split(parts, lines[i], is_any_of(";"));
+        //if (buffer.size()>0 && buffer[0].size()>0)
+        //{
+        //    CHECK(buffer[0].size()==parts.size()) << "data size not match";
+        //}
+        for (int i=0;i<parts.size();i++)
+        {
+            data.push_back(vector<Dtype>());
+            vector<Dtype>& subdata = data[data.size()-1];
+            vector<string> subparts;
+            if (parts[i].length()>0)
+            {
+                split(subparts,parts[i],is_any_of(","));
+                for (int j=0;j<subparts.size();j++)
+                {
+                    subdata.push_back(std::stof(subparts[j]));
+                }
+            }
+            else
+            {
+                //do nothing
+            }
+        }
+        buffer[i] = data;
+    }
+}
+
+template <typename Dtype>
 void ExTextMemoryDataLayer<Dtype>::DataLayerSetUp(
     const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top)
@@ -59,13 +95,14 @@ void ExTextMemoryDataLayer<Dtype>::DataLayerSetUp(
     string line;
     vector<vector<vector<Dtype> > > buffer;
     int lineCount = 0;
+    vector<string> lines;
+    
     while (!infile.eof())
     {
         line = "";
         getline(infile,line);
         trim(line);
 
-        vector<vector<Dtype> > data;
         if (line.length()>0)
         {
             //cout << lineCount << endl;
@@ -74,36 +111,14 @@ void ExTextMemoryDataLayer<Dtype>::DataLayerSetUp(
                 LOG(INFO) << "read text data index: " << lineCount;
             }
             lineCount++;
-            vector<string> parts;
-            split(parts, line, is_any_of(";"));
-            if (buffer.size()>0)
+            lines.push_back(line);
+            if (lines.size()==batchSize)
             {
-                CHECK(buffer[0].size()==parts.size()) << "data size not match";
+                processLines(lines,buffer);
+                addBuffer(buffer);
+                buffer.clear();
+                lines.clear();
             }
-            for (int i=0;i<parts.size();i++)
-            {
-                data.push_back(vector<Dtype>());
-                vector<Dtype>& subdata = data[data.size()-1];
-                vector<string> subparts;
-                if (parts[i].length()>0)
-                {
-                    split(subparts,parts[i],is_any_of(","));
-                    for (int j=0;j<subparts.size();j++)
-                    {
-                        subdata.push_back(std::stof(subparts[j]));
-                    }
-                }
-                else
-                {
-                    //do nothing
-                }
-            }
-            buffer.push_back(data);
-        }//if length>0
-        if (buffer.size()==batchSize)
-        {
-            addBuffer(buffer);
-            buffer.clear();
         }
     }//while eof
 

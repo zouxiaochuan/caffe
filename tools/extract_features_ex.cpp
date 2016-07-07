@@ -32,16 +32,31 @@ void extract(const string& outname, const string& paramname,
     for(int i=0;i<nBatch;i++)
     {
         net->Forward();
-        for(int j=0;j<blobnames.size();j++)
+        int batchSize = net->blob_by_name(blobnames[0])->num();
+        
+        for(int b=0;b<batchSize;b++)
         {
-            const boost::shared_ptr<Blob<Dtype> > feature_blob = net
-                ->blob_by_name(blobnames[j]);
-            for(int k=0;k<feature_blob->count();k++)
+            for(int j=0;j<blobnames.size();j++)
             {
-                outfile << feature_blob->cpu_data()[k] << " ";
+                if (j>0)
+                {
+                    outfile << ";";
+                }
+                const boost::shared_ptr<Blob<Dtype> > feature_blob = net
+                    ->blob_by_name(blobnames[j]);
+                int size = feature_blob->count()/batchSize;
+                
+                for(int k=0;k<size;k++)
+                {
+                    if (k>0)
+                    {
+                        outfile << ",";
+                    }
+                    outfile << feature_blob->cpu_data()[b*size+k];
+                }
             }
+            outfile << endl;
         }
-        outfile << endl;
     }
 }
 

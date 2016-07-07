@@ -22,6 +22,7 @@ protected:
 
 private:
     void addBuffer(const vector<vector<vector<Dtype> > >& buffer);
+    void processLines(const vector<string>& lines, vector<vector<vector<Dtype> > >& buffer);
 
 private:
     vector<vector<Blob<Dtype>* > > datas_;

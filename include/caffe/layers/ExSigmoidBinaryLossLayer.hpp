@@ -17,10 +17,10 @@ namespace caffe
         specific node among all the output nodes
     */
     template <typename Dtype>
-    class SigmoidBinaryLossLayer : public LossLayer<Dtype> 
+    class ExSigmoidBinaryLossLayer : public LossLayer<Dtype> 
     {
         public:
-            explicit SigmoidBinaryLossLayer(const LayerParameter& param)
+            explicit ExSigmoidBinaryLossLayer(const LayerParameter& param)
                  : LossLayer<Dtype>(param),
             sigmoid_layer_(new SigmoidLayer<Dtype>(param)),
             sigmoid_output_(new Blob<Dtype>()) 
@@ -31,7 +31,7 @@ namespace caffe
             virtual void Reshape(const vector<Blob<Dtype>*>& bottom,const vector<Blob<Dtype>*>& top);
             virtual inline const char* type() const
             {
-                return "SigmoidBinaryLoss";
+                return "ExSigmoidBinaryLoss";
             }
             virtual inline int ExactNumBottomBlobs() const { return 3; }
 			
