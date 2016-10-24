@@ -199,7 +199,7 @@ ifeq ($(USE_OPENCV), 1)
 	endif
 		
 endif
-PYTHON_LIBRARIES := boost_python python2.7
+PYTHON_LIBRARIES ?= boost_python python2.7
 WARNINGS := -Wall -Wno-sign-compare
 
 ##############################
@@ -674,6 +674,8 @@ superclean: clean supercleanfiles
 $(DIST_ALIASES): $(DISTRIBUTE_DIR)
 
 $(DISTRIBUTE_DIR): all py | $(DISTRIBUTE_SUBDIRS)
+	# add proto
+	cp -r src/caffe/proto $(DISTRIBUTE_DIR)/
 	# add include
 	cp -r include $(DISTRIBUTE_DIR)/
 	mkdir -p $(DISTRIBUTE_DIR)/include/caffe/proto
